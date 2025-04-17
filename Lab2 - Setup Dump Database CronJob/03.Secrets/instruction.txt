@@ -1,0 +1,42 @@
+INSTALLATION GUIDE – Kubernetes Secrets Setup for DB Backup CronJob
+===================================================================
+
+STEP 1: PREPARE .conf FILES
+---------------------------
+Create the following environment config files in your working directory:
+
+1. postgres-secrets.conf
+   ----------------------
+   POSTGRES_USER=your_postgres_user
+   POSTGRES_PASSWORD=your_postgres_password
+
+2. mysql-secrets.conf
+   -------------------
+   MYSQL_USER=your_mysql_user
+   MYSQL_PASSWORD=your_mysql_password
+
+3. aws-secrets.conf
+   -----------------
+   AWS_ACCESS_KEY=your_aws_access_key
+   AWS_SECRET_KEY=your_aws_secret_key
+
+4. s3-secrets.conf
+   ----------------
+   S3_BUCKET_NAME=your_s3_bucket_name
+
+5. blob-secrets.conf
+   ------------------
+   AZURE_STORAGE_ACCOUNT=your_azure_account_name
+   AZURE_STORAGE_KEY=your_azure_access_key
+
+STEP 2: RUN THE SCRIPT TO GENERATE SECRET YAML FILES
+-----------------------------------------------------
+./create-secrets.sh
+
+STEP 3: APPLY GENERATED SECRETS TO THE CLUSTER
+----------------------------------------------
+Run the following command to apply all generated secret files:
+
+   kubectl apply -n dbs -f output-secrets/ 
+
+DONE!

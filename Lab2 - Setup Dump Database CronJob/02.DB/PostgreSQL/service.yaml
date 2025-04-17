@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: dbs
+spec:
+  ports:
+  - port: 5432
+  clusterIP: None  # Headless service: không có IP
+  selector:
+    app: postgres

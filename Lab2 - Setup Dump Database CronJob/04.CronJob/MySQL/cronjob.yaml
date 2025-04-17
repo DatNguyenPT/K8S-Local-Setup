@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: db-backup
+  namespace: dbs
+spec:
+  schedule: "*/2 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: lease-sa # Service account with permissions to create/ get leases
+          containers:
+            - name: backup
+              image: danny2810/mysql-backup:v1.0.0
+              imagePullPolicy: Always
+              envFrom:
+                - secretRef:
+                    name: mysql-secret
+                - secretRef:
+                    name: aws-secret
+                - secretRef:
+                    name: s3-secret
+                - secretRef:
+                    name: blob-secret
+              volumeMounts:
+                - name: script-volume
+                  mountPath: /scripts
+                  readOnly: true
+                - name: backup-dir
+                  mountPath: /backup
+              resources:
+                requests:
+                  memory: "256Mi"
+                  cpu: "100m" # 0.1 core
+                limits:
+                  memory: "512Mi"
+                  cpu: "500m" # 0.5 core
+          volumes:
+            - name: script-volume
+              configMap:
+                name: mysql-backup-script
+                defaultMode: 0755
+            - name: backup-dir
+              emptyDir: {}
+          restartPolicy: OnFailure

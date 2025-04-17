@@ -1,0 +1,6 @@
+.vagrant/
+*.vagrant
+DockerSetup.sh
+Nexus.sh
+Vagrantfile
+requirements.txt

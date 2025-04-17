@@ -1,0 +1,11 @@
+apiVersion: coordination.k8s.io/v1
+kind: Lease
+metadata:
+  name: db-backup-lease
+  namespace: dbs
+spec:
+  holderIdentity: ""
+  leaseDurationSeconds: 3600 
+  acquireTime: null
+  renewTime: null
+  leaderTransitions: 0

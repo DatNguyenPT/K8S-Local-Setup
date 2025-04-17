@@ -1,0 +1,49 @@
+LEASE RBAC SETUP GUIDE
+=======================
+
+This guide walks you through setting up the necessary RBAC permissions for a Kubernetes CronJob or Pod to use Leases for coordination (e.g., ensuring only one backup job runs at a time).
+
+---
+
+STEP 1: APPLY THE SERVICE ACCOUNT
+----------------------------------
+This ServiceAccount will be assigned to your CronJob (e.g., `db-backup`) to give it permission to interact with Lease objects.
+
+Apply it with:
+
+    kubectl apply -f Lease/lease-sa.yaml
+
+---
+
+STEP 2: DEFINE THE ROLE
+------------------------
+The Role grants fine-grained access to Leases within a specific namespace (e.g., `dbs`).
+
+Apply it with:
+
+    kubectl apply -f Lease/role.yaml
+
+---
+
+STEP 3: BIND THE ROLE TO THE SERVICE ACCOUNT
+---------------------------------------------
+The RoleBinding connects the above Role with the ServiceAccount, enabling lease operations.
+
+Apply it with:
+
+    kubectl apply -f Lease/role-binding.yaml
+
+---
+
+VERIFY SETUP
+-------------
+Check if the RoleBinding is working:
+
+    kubectl get rolebinding -n dbs
+    kubectl describe rolebinding lease-role-binding -n dbs
+
+Check that the ServiceAccount is attached to your CronJob:
+
+```yaml
+spec:
+  serviceAccountName: lease-sa
