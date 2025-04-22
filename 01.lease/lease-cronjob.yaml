@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: lease-renewal-cronjob
+  namespace: db-backup
+spec:
+  schedule: "*/50 * * * *"  
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: lease-sa
+          containers:
+            - name: lease-renewal
+              image: "busybox" 
+              command: ["/bin/sh", "-c", "kubectl lease renew db-backup-lease -n db-backup"]
+          restartPolicy: OnFailure

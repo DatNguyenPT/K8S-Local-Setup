@@ -1,0 +1,62 @@
+LEASE SETUP & MANAGEMENT GUIDE
+==============================
+
+This guide explains how to set up and manage Kubernetes Leases to control execution of your backup CronJobs in a distributed and safe way.
+
+---
+
+STEP 1: APPLY THE INITIAL LEASE OBJECT
+--------------------------------------
+The `lease.yaml` file contains the initial Lease definition that will be used by your CronJobs to acquire a lock before running.
+
+Apply it to your cluster using:
+
+    kubectl apply -f lease.yaml
+
+This ensures that the Lease resource exists in your target namespace (e.g., `dbs`) before any CronJob attempts to use it.
+
+---
+
+STEP 2: DEPLOY THE LEASE RENEWAL CRONJOB
+----------------------------------------
+The `lease-cronjob.yaml` is responsible for safely acquiring and renewing the lease before starting the main task (e.g., DB backup).
+
+Deploy it with:
+
+    kubectl apply -f lease-cronjob.yaml
+
+Make sure this CronJob runs **before** or alongside your main CronJob (e.g., `db-backup`) and uses the same `leaseName`.
+
+---
+
+WHAT THE LEASE DOES
+-------------------
+- Prevents multiple instances of the same CronJob from executing simultaneously.
+- Useful for high-availability setups with replicated controllers or backup jobs.
+- The CronJob script checks/renews the Lease and only continues if the Lease is successfully acquired.
+
+---
+
+TROUBLESHOOTING
+---------------
+❌ If the CronJob never runs:
+- Check that the Lease name matches in both YAML files.
+- Ensure `lease-sa` ServiceAccount has proper RBAC permissions to access Leases.
+
+📄 To inspect the Lease status:
+
+    kubectl describe lease <lease-name> -n dbs
+
+🧪 To simulate lease locking logic, you can edit or delete the Lease manually and watch how the CronJob behaves.
+
+---
+
+COMPONENT FILES
+---------------
+- lease.yaml → Creates the Lease resource
+- lease-cronjob.yaml → Acquires & renews the lease for safe backup execution
+
+---
+
+DONE!
+

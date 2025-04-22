@@ -1,0 +1,28 @@
+INSTALLATION GUIDE – Kubernetes Secrets Setup for DB Backup CronJob
+===================================================================
+
+STEP 1: PREPARE CONFIGMAPS
+---------------------------
+Check and custom configmap files to be suitable for cluster: mysql-configmap.yaml and postgres-configmap.yaml
+Apply all configmap to the `dbs` namespace with:
+   kubectl create configmap mysql-config --from-file=mysql-configmap.yaml -n db-backup
+   kubectl create configmap postgres-config --from-file=postgres-configmap.yaml -n db-backup
+
+STEP 2: PREPARE PVs
+-----------------------------------------------------
+Make sure to create MySQL PV and Postgres PV before setting up DB services
+Apply all PVs to the `dbs` namespace with:
+   kubectl apply -n db-backup -f mysql-pv.yaml 
+   kubectl apply -n db-backup -f postgres-pv.yaml
+
+STEP 3: APPLY STATEFULSET AND SERVICE
+----------------------------------------------
+Run these commands to setup services and pods:
+   kubectl apply -n db-backup -f mysql-statefulset.yaml
+   kubectl apply -n db-backup -f service.yaml
+
+   kubectl apply -n db-backup -f postgres-statefulset.yaml
+   kubectl apply -n db-backup -f service.yaml
+   
+DONE!
+

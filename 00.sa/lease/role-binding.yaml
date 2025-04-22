@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: lease-rolebinding
+  namespace: db-backup
+subjects:
+  - kind: ServiceAccount
+    name: lease-sa
+    namespace: db-backup
+roleRef:
+  kind: Role
+  name: lease-role
+  apiGroup: rbac.authorization.k8s.io

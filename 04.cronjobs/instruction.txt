@@ -1,0 +1,22 @@
+INSTALLATION GUIDE – Kubernetes Secrets Setup for DB Backup CronJob
+===================================================================
+
+STEP 1: PREPARE CONFIGMAPS
+---------------------------
+Check and custom configmap files to be setup database dump logic for cluster:
+Apply all configmap to the `dbs` namespace with:
+   kubectl create configmap mysql-backup-script --from-file=mysql/mysql-dump.sh -n db-backup
+   kubectl create configmap postgres-backup-script --from-file=postgresql/postgres-dump.sh -n db-backup
+
+STEP 2: PREPARE DOCKER IMAGES
+-----------------------------------------------------
+Custom more suitable images in Dockerfiles or just pull my public images: danny2810/mysql-backup:v1.0.0 and danny2810/postgres-backup:v1.0.0
+If you create your own images, make sure to build and push it Dockerhub or Nexus
+
+STEP 3: APPLY CRONJOBS
+----------------------------------------------
+Run these commands to setup cronjobs:
+   kubectl apply -n db-backup -f cronjob.yaml
+   
+DONE!
+
