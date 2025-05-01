@@ -8,4 +8,4 @@ spec:
   leaseDurationSeconds: 3600 
   acquireTime: null
   renewTime: null
-  leaderTransitions: 0
+  leaseTransitions: 0
